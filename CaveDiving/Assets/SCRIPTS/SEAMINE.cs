@@ -9,6 +9,7 @@ public class SEAMINE : MonoBehaviour
     public AudioClip Explosion;
     public float Timer = 1f;
     private Explosion Effect;
+    public Fade Fade;
     private int A1 = 0;
 
 
@@ -23,7 +24,6 @@ public class SEAMINE : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-
             if (A1 == 0)
             {
 
@@ -40,6 +40,7 @@ public class SEAMINE : MonoBehaviour
         MineSoundEffects.PlayOneShot(Explosion);
         Effect.ExplosionEffect();
         Mine.SetActive(false);
+        Fade.FADEout();
 
 
         yield return null;

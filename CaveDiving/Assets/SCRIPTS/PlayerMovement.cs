@@ -12,37 +12,50 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private bool isActing = false;
 
+    private Vector2 respawnPosition;
+
     void Start()
     {
+        respawnPosition = transform.position;
         rb = GetComponent<Rigidbody2D>();
-
-        // FIX: Using the updated, modern Unity physics naming conventions
         if (rb.linearDamping == 0) rb.linearDamping = 1.5f;
         if (rb.angularDamping == 0.05f) rb.angularDamping = 3f;
     }
-
+    public void Respawn()
+    {
+        transform.position = respawnPosition;
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero; 
+        }
+    }
+    public void UpdateCheckpoint(Vector2 newPosition)
+    {
+        respawnPosition = newPosition;
+    }
     void Update()
     {
         if (Keyboard.current == null) return;
         if (isActing) return;
 
         // A rotates clockwise
-        if (Keyboard.current.aKey.wasPressedThisFrame)
+        if (Keyboard.current.qKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedRotateRoutine(-rotationTorque));
         }
         // D rotates counter-clockwise
-        if (Keyboard.current.dKey.wasPressedThisFrame)
+        if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedRotateRoutine(rotationTorque));
         }
         // UpArrow moves down (relative to player orientation)
-        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        if (Keyboard.current.oKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedMoveRoutine(Vector2.down));
         }
         // DownArrow moves up (relative to player orientation)
-        if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+        if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedMoveRoutine(Vector2.up));
         }
