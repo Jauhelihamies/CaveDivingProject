@@ -23,9 +23,10 @@ public class SEAMINE : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("player on range");
+
             if (A1 == 0)
             {
+
                 MineSoundEffects.PlayOneShot(Clank);
                 StartCoroutine(StartTheBomb());
                 A1++;
@@ -39,6 +40,7 @@ public class SEAMINE : MonoBehaviour
         MineSoundEffects.PlayOneShot(Explosion);
         Effect.ExplosionEffect();
         Mine.SetActive(false);
+
 
         yield return null;
     }
