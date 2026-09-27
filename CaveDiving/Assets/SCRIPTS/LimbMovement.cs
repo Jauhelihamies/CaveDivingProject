@@ -5,9 +5,6 @@ public class AutoReturnRotator : MonoBehaviour
 {
     private enum RotationState { Idle, RotatingToTarget, Returning }
     private RotationState currentState = RotationState.Idle;
-
-    [Header("Ohjausasetukset")]
-    [Tooltip("Näppäin, jolla pyöriminen käynnistetään.")]
     public Key activationKey = Key.K; // Voit vaihtaa tämän Inspectorista!
 
     [Header("Pyörimisasetukset")]

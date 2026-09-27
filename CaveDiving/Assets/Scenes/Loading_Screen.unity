@@ -483,7 +483,6 @@ MonoBehaviour:
   Quotes:
   - '"Every tunnel looks identical when the panic sets in."'
   - '"Up and down lose all meaning in the dark."'
-  - '"There is no exit. There was never an exit. "'
   - '"I just heard myself... but I haven''t spoken in two hours."'
   TEXT: {fileID: 923682233}
   fadeDuration: 3

@@ -17,8 +17,6 @@ public class SEAMINE : MonoBehaviour
     private void Start()
     {
         Effect = GetComponent<Explosion>();
-
-
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
