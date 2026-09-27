@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1233817245240907816}
   - component: {fileID: 4592511038161094785}
   - component: {fileID: 7666173524595550664}
+  - component: {fileID: 1732582494774118265}
   m_Layer: 0
   m_Name: SharkEye
   m_TagString: Untagged
@@ -59,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -111,6 +112,22 @@ MonoBehaviour:
   twitchRadius: 0.015
   twitchHoldDurationMin: 0.4
   twitchHoldDurationMax: 0.9
+--- !u!114 &1732582494774118265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1458874260457370831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ecf745b65147784b8e9b8c4cbfd2ba2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlowController
+  glowColor: {r: 16, g: 16, b: 16, a: 1}
+  pulseSpeed: 2
+  minIntensity: 0.6
+  maxIntensity: 0.8
 --- !u!1 &1607471209942201828
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,6 +233,9 @@ GameObject:
   - component: {fileID: 3989328964370199671}
   - component: {fileID: 417980754602134687}
   - component: {fileID: 2912627831849290992}
+  - component: {fileID: 7097917535381750}
+  - component: {fileID: 5962047958810494653}
+  - component: {fileID: -3732692155755196902}
   m_Layer: 0
   m_Name: AI_SHARK
   m_TagString: Untagged
@@ -254,9 +274,7 @@ MonoBehaviour:
   currentState: 0
   patrolSpeed: 3.5
   chaseSpeed: 5
-  patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
+  patrolPoints: []
   visionRange: 40
   visionAngle: 50
   obstacleMask:
@@ -265,8 +283,8 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 8
-  rotationSpeed: 1
-  maxClimbAngle: 45
+  avoidanceDistance: 8
+  avoidanceForce: 10
   lostTargetDelay: 4
 --- !u!50 &1978040350847363583
 Rigidbody2D:
@@ -309,7 +327,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Fade
   fadeSprite: {fileID: 1701295493450182542}
   fadeDuration: 0.2
-  StartCount: 0
+  StartCount: 1.2
   Level_Name: Loading_Screen
 --- !u!114 &417980754602134687
 MonoBehaviour:
@@ -375,6 +393,167 @@ PolygonCollider2D:
       - {x: -2.4316986, y: 0.16007483}
       - {x: -0.5632005, y: -2.014927}
   m_UseDelaunayMesh: 1
+--- !u!68 &7097917535381750
+EdgeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249253336902629869}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_EdgeRadius: 0
+  m_Points:
+  - {x: 0.7385516, y: -2.411047}
+  - {x: 0.08480024, y: -2.1981297}
+  - {x: -0.72291565, y: -1.5764847}
+  - {x: -1.8872447, y: -0.34578705}
+  - {x: -2.013358, y: 0.08151436}
+  - {x: -1.6134353, y: 0.32336426}
+  - {x: 0.40091562, y: 0.67707443}
+  m_AdjacentStartPoint: {x: 0, y: 0}
+  m_AdjacentEndPoint: {x: 0, y: 0}
+  m_UseAdjacentStartPoint: 0
+  m_UseAdjacentEndPoint: 0
+--- !u!114 &5962047958810494653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249253336902629869}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbb4a4f1ee0e18b4eab91a790318e431, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayRandomSoundOnTrigger2D
+  audioClips:
+  - {fileID: 8300000, guid: 6c7ecd70ca6eede4ca08a76cf7acd02c, type: 3}
+  - {fileID: 8300000, guid: 975c731a8fd5e1e4090bdbdf52cc33d4, type: 3}
+  audioSource: {fileID: -3732692155755196902}
+--- !u!82 &-3732692155755196902
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249253336902629869}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5282502630210536091
 GameObject:
   m_ObjectHideFlags: 0
