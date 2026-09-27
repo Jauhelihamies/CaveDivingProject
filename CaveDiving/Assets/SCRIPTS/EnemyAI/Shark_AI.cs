@@ -27,6 +27,7 @@ public class SharkAI : MonoBehaviour
     private Transform playerTransform;
     private bool facingRight = false; // Alkuperäinen sprite katsoo vasemmalle
     private PlayerMovement cachedPlayerScript;
+
     [Header("Lost Delay Settings")]
     [Tooltip("Kuinka monta sekuntia hai jatkaa jahtaamista sen jälkeen, kun pelaaja katosi näkyvistä.")]
     public float lostTargetDelay = 2.5f;
@@ -102,7 +103,7 @@ public class SharkAI : MonoBehaviour
         {
             facingRight = false;
             Vector3 scale = transform.localScale;
-            scale.x = Mathf.Abs(scale.x); 
+            scale.x = Mathf.Abs(scale.x);
             transform.localScale = scale;
         }
 
@@ -119,7 +120,10 @@ public class SharkAI : MonoBehaviour
         if (distanceToPlayer <= visionRange)
         {
             Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
-            Vector2 forwardDirection = -transform.right;
+
+            // KORJAUS: Koska rotaatio on lukittu suoraksi, käytetään maailmankoordinaatteja
+            // Hain rintamasuunta riippuu nyt suoraan facingRight-muuttujan arvosta!
+            Vector2 forwardDirection = facingRight ? Vector2.right : Vector2.left;
 
             float angleToPlayer = Vector2.Angle(forwardDirection, directionToPlayer);
 
@@ -137,7 +141,6 @@ public class SharkAI : MonoBehaviour
         }
         if (canSeePlayerThisFrame)
         {
-
             lostTargetTimer = lostTargetDelay;
 
             if (currentState != SharkState.Chasing)
@@ -170,12 +173,12 @@ public class SharkAI : MonoBehaviour
         transform.rotation = Quaternion.identity;
         cachedPlayerScript?.ChaseIsOver();
     }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = currentState == SharkState.Chasing ? Color.red : Color.green;
         Gizmos.DrawWireSphere(transform.position, visionRange);
-
-        Vector3 forward = -transform.right; // Korjattu osoittamaan hain kuonon suuntaan
+        Vector3 forward = facingRight ? Vector3.right : Vector3.left;
         Vector3 leftBoundary = Quaternion.Euler(0, 0, visionAngle / 2f) * forward;
         Vector3 rightBoundary = Quaternion.Euler(0, 0, -visionAngle / 2f) * forward;
 

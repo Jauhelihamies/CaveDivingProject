@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3485764172186772873}
   - component: {fileID: 4584059411118101490}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Solid_Black
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8342318346652478586}
   - component: {fileID: 2306820240679466069}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FadeControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6332701182487320495}
   - component: {fileID: 4295279627652030342}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SeaMineGraphics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -245,7 +245,7 @@ GameObject:
   - component: {fileID: 2235617071654299870}
   - component: {fileID: 4514353585698915619}
   - component: {fileID: 2430470489303043833}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SeaMine
   m_TagString: SeaMine
   m_Icon: {fileID: 0}
