@@ -1,48 +1,49 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Movement Settings")]
     [SerializeField] private float moveForce = 8f;
     [SerializeField] private float rotationTorque = 18f;
     [SerializeField] private float inputDelay = 0.3f;
 
     private Rigidbody2D rb;
     private bool isActing = false;
+    public float Adrealine_Speed = 8f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        // FIX: Using the updated, modern Unity physics naming conventions
         if (rb.linearDamping == 0) rb.linearDamping = 1.5f;
         if (rb.angularDamping == 0.05f) rb.angularDamping = 3f;
     }
-
+    public void PlayerIsChased()
+    {
+        moveForce = Adrealine_Speed;
+    }
+    public void ChaseIsOver()
+    {
+        moveForce = 2f;
+    }
     void Update()
     {
         if (Keyboard.current == null) return;
         if (isActing) return;
-
-        // A rotates clockwise
-        if (Keyboard.current.aKey.wasPressedThisFrame)
+        if (Keyboard.current.qKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedRotateRoutine(-rotationTorque));
         }
-        // D rotates counter-clockwise
-        if (Keyboard.current.dKey.wasPressedThisFrame)
+        if (Keyboard.current.wKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedRotateRoutine(rotationTorque));
         }
-        // UpArrow moves down (relative to player orientation)
-        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
+        if (Keyboard.current.oKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedMoveRoutine(Vector2.down));
         }
-        // DownArrow moves up (relative to player orientation)
-        if (Keyboard.current.downArrowKey.wasPressedThisFrame)
+        if (Keyboard.current.pKey.wasPressedThisFrame)
         {
             StartCoroutine(DelayedMoveRoutine(Vector2.up));
         }
