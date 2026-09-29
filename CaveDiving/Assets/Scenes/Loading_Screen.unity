@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadLevel
   StartDelay: 6
-  LevelName: SampleScene
+  LevelName: Main
 --- !u!1 &842458484
 GameObject:
   m_ObjectHideFlags: 0
