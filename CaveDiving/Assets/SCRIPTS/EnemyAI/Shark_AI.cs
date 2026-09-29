@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class SharkAI : MonoBehaviour
 {
+    private SharkAudioManager sharkAudio;
     public enum SharkState { Patrolling, Chasing }
 
     [Header("State")]
@@ -38,6 +39,8 @@ public class SharkAI : MonoBehaviour
 
     void Start()
     {
+        sharkAudio = GetComponent<SharkAudioManager>();
+        if (sharkAudio == null) sharkAudio = GetComponentInChildren<SharkAudioManager>();
         sharkCollider = GetComponent<Collider2D>();
 
         GameObject playerObj = GameObject.FindWithTag("Player");
@@ -194,6 +197,7 @@ public class SharkAI : MonoBehaviour
     {
         currentState = SharkState.Chasing;
         cachedPlayerScript?.PlayerIsChased();
+        sharkAudio?.StartChaseMusic();
     }
 
     void OnPlayerLost()
@@ -201,6 +205,7 @@ public class SharkAI : MonoBehaviour
         currentState = SharkState.Patrolling;
         transform.rotation = Quaternion.identity;
         cachedPlayerScript?.ChaseIsOver();
+        sharkAudio?.StopChaseMusic();
     }
 
     private void OnDrawGizmosSelected()
