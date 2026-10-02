@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class MainMenuUI: MonoBehaviour
 {
     public ImageFader StartAlarmSystem;
-
+    public MainMenu GetFleeCode;
 
 
     public void Update()
@@ -25,11 +25,11 @@ public class MainMenuUI: MonoBehaviour
                     StartAlarmSystem.StartGame();
                 }
             }
-            if (hitInfo.collider.gameObject.CompareTag("Info"))
+            if (hitInfo.collider.gameObject.CompareTag("Quit"))
             {
                 if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
                 {
-
+                    GetFleeCode.Flee();
                 }
             }
         }

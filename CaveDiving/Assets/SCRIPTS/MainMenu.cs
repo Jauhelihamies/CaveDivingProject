@@ -3,13 +3,24 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
+
 {
     [Header("Scene")]
     [SerializeField] private string caveSceneName = "GameScene";
 
-    [Header("Jumpscare")]
+    [Header("Audio Components")]
+    [SerializeField] private AudioSource audioSource;
+
+    [Header("Audio Clips")]
+    [SerializeField] private AudioClip riserClip;
+    [SerializeField] private AudioClip screamClip;
+
+    [Header("Jumpscare Timing")]
+    [Tooltip("Piinaavan hiljaisuuden kesto sekunteina riser-äänen jälkeen ennen säikäytystä.")]
+    [SerializeField] private float delayBeforeScream = 1.0f; // UUSI: Hiljaisuuden säätö
+
+    [Header("Jumpscare Visuals")]
     [SerializeField] private RectTransform sharkImage;
-    [SerializeField] private AudioSource screamSource;
     [SerializeField] private float startScale = 0.2f;
     [SerializeField] private float endScale = 3f;
     [SerializeField] private float growTime = 0.35f;
@@ -32,11 +43,28 @@ public class MainMenu : MonoBehaviour
 
     private IEnumerator JumpscareThenQuit()
     {
+        if (audioSource != null && riserClip != null)
+        {
+            audioSource.PlayOneShot(riserClip);
+            yield return null;
+        }
+
+        // 2. UUSI: Piinaava hiljaisuus jännitysäänen jälkeen
+        if (delayBeforeScream > 0f)
+        {
+            yield return new WaitForSecondsRealtime(delayBeforeScream);
+        }
+
+        // 3. Aktivoidaan säikäytyskuva ja huuto
         sharkImage.gameObject.SetActive(true);
         sharkImage.localScale = Vector3.one * startScale;
 
-        if (screamSource != null) screamSource.Play();
+        if (audioSource != null && screamClip != null)
+        {
+            audioSource.PlayOneShot(screamClip);
+        }
 
+        // 4. Kuvan kasvatus-animaatio
         float t = 0f;
         while (t < growTime)
         {
