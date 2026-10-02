@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
-
 {
     [Header("Scene")]
     [SerializeField] private string caveSceneName = "GameScene";
@@ -16,8 +16,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private AudioClip screamClip;
 
     [Header("Jumpscare Timing")]
-    [Tooltip("Piinaavan hiljaisuuden kesto sekunteina riser-äänen jälkeen ennen säikäytystä.")]
-    [SerializeField] private float delayBeforeScream = 1.0f; // UUSI: Hiljaisuuden säätö
+    [Tooltip("Kuinka monta sekuntia riser-äänen alkamisesta odotetaan ennen taustan vaihtoa. Tämän jälkeen siirrytään heti hiljaisuuteen.")]
+    [SerializeField] private float backgroundChangeDelay = 2.0f;
+    [Tooltip("Piinaavan hiljaisuuden kesto sekunteina taustan vaihdon jälkeen ennen säikäytystä.")]
+    [SerializeField] private float delayBeforeScream = 1.0f;
 
     [Header("Jumpscare Visuals")]
     [SerializeField] private RectTransform sharkImage;
@@ -25,6 +27,9 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private float endScale = 3f;
     [SerializeField] private float growTime = 0.35f;
     [SerializeField] private float holdTime = 1.0f;
+
+    [Header("Backgrounds")]
+    public GameObject TensionBackGround;
 
     private bool fleeing;
 
@@ -45,41 +50,61 @@ public class MainMenu : MonoBehaviour
     {
         if (audioSource != null && riserClip != null)
         {
+
             audioSource.PlayOneShot(riserClip);
-            yield return null;
+
+
+            yield return new WaitForSecondsRealtime(backgroundChangeDelay);
+
+
+            if (TensionBackGround != null)
+            {
+                TensionBackGround.gameObject.SetActive(true);
+            }
+
         }
 
-        // 2. UUSI: Piinaava hiljaisuus jännitysäänen jälkeen
         if (delayBeforeScream > 0f)
         {
             yield return new WaitForSecondsRealtime(delayBeforeScream);
         }
 
-        // 3. Aktivoidaan säikäytyskuva ja huuto
-        sharkImage.gameObject.SetActive(true);
-        sharkImage.localScale = Vector3.one * startScale;
+
+        if (sharkImage != null)
+        {
+            sharkImage.gameObject.SetActive(true);
+            sharkImage.localScale = Vector3.one * startScale;
+        }
 
         if (audioSource != null && screamClip != null)
         {
             audioSource.PlayOneShot(screamClip);
         }
 
-        // 4. Kuvan kasvatus-animaatio
+        // Kuvan kasvatus-animaatio
         float t = 0f;
         while (t < growTime)
         {
             t += Time.unscaledDeltaTime;
             float p = Mathf.Clamp01(t / growTime);
             float eased = p * p;
-            sharkImage.localScale = Vector3.one * Mathf.Lerp(startScale, endScale, eased);
+            if (sharkImage != null)
+            {
+                sharkImage.localScale = Vector3.one * Mathf.Lerp(startScale, endScale, eased);
+            }
             yield return null;
         }
 
-        sharkImage.localScale = Vector3.one * endScale;
+        if (sharkImage != null)
+        {
+            sharkImage.localScale = Vector3.one * endScale;
+        }
+
         yield return new WaitForSecondsRealtime(holdTime);
 
         Quit();
     }
+
 
     private void Quit()
     {
