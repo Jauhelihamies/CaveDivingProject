@@ -8,6 +8,8 @@ TagManager:
   - Start
   - Info
   - Quit
+  - Enemy
+  - Boss
   layers:
   - Default
   - TransparentFX
