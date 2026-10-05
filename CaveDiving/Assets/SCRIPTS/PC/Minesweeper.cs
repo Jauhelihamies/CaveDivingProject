@@ -7,38 +7,32 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
-// Minesweeper minigame (new Input System). Lives inside a UI panel on your existing canvas.
-// Esc only closes THIS panel - it never quits the app.
-//
-// Setup:
-//  1. Put this on an object that stays ACTIVE (NOT on the panel itself, or Esc/Open() stop working).
-//  2. Drag your in-game app window panel into "Panel" (needs roughly 640x720).
-//  3. Drag the app's icon Button into "App Button" - clicking it opens the game.
-//     (Or leave it empty and call minesweeper.Open() / wire the Button's On Click yourself.)
-// Esc closes the panel and fires onClosed.
 public class Minesweeper : MonoBehaviour
 {
-    [Tooltip("Optional existing panel to build the board in. Leave empty to auto-create one.")]
+    [Tooltip("Existing panel to build the board in. Leave empty to auto-create one.")]
     [SerializeField] RectTransform panel;
     [Tooltip("The app icon button. If set, clicking it opens the game.")]
     [SerializeField] Button appButton;
     [SerializeField] bool openOnStart = false;
     [Tooltip("Off = reopening keeps the current board (it only resets after a win or loss).")]
     [SerializeField] bool newGameOnEveryOpen = true;
-    [Tooltip("Show the mouse cursor while open and restore it on close (for first-person games).")]
+    [Tooltip("Show the mouse cursor while open and restore it on close.")]
     [SerializeField] bool manageCursor = true;
-    [Tooltip("Overall size multiplier. 1 = 640x720 panel, 0.1667 = 6x smaller.")]
-    [SerializeField] float sizeScale = 1f / 6f;
-    [Tooltip("Text is drawn this many times larger and shrunk back down, which keeps tiny text sharp. 4 is a good default.")]
+    [Tooltip("Text is drawn this many times larger and shrunk back down, which keeps tiny text sharp.")]
     [SerializeField] float textSupersample = 4f;
     public UnityEvent onClosed;
 
-    // Frame in which the panel was last closed. A pause menu can compare this to Time.frameCount
-    // to ignore the same Esc press.
     public static int LastCloseFrame = -1;
 
     const int N = 10;
     const int MINES = 15;
+
+    const float DesignW = 640f;
+    const float DesignH = 720f;
+    const float StatusH = 60f;
+    const float Gap = 10f;
+    const float GridSize = 600f;
+    const float Spacing = 2f;
 
     static readonly Color[] NumberColors =
     {
@@ -55,14 +49,14 @@ public class Minesweeper : MonoBehaviour
     readonly Text[,] label = new Text[N, N];
 
     Text status;
+    RectTransform statusRT;
+    RectTransform gridRT;
+    GridLayoutGroup grid;
     Font font;
     bool minesPlaced, gameOver, hasGame;
     int openedCount;
     CursorLockMode prevLock;
     bool prevVisible;
-
-    float S(float v) => v * sizeScale;
-    int TF(float v) => Mathf.Max(1, Mathf.RoundToInt(v * sizeScale * textSupersample)); // supersampled font size
 
     public bool IsOpen => panel != null && panel.gameObject.activeSelf;
 
@@ -89,15 +83,16 @@ public class Minesweeper : MonoBehaviour
         if (kb.rKey.wasPressedThisFrame) ResetGame();
     }
 
-    // ---------- Open / close ----------
-
     public void Open()
     {
         bool wasOpen = IsOpen;
         panel.gameObject.SetActive(true);
-        panel.SetAsLastSibling(); // draw on top of the rest of your UI
+        panel.SetAsLastSibling();
+        FitLayout();
 
-        if (manageCursor && !wasOpen)
+        if (wasOpen) return;
+
+        if (manageCursor)
         {
             prevLock = Cursor.lockState;
             prevVisible = Cursor.visible;
@@ -123,8 +118,6 @@ public class Minesweeper : MonoBehaviour
         onClosed?.Invoke();
     }
 
-    // ---------- UI ----------
-
     void BuildUI()
     {
         if (panel == null)
@@ -147,10 +140,9 @@ public class Minesweeper : MonoBehaviour
             panel = (RectTransform)panelGO.transform;
             panel.anchorMin = panel.anchorMax = panel.pivot = new Vector2(0.5f, 0.5f);
             panel.anchoredPosition = Vector2.zero;
-            panel.sizeDelta = new Vector2(S(640), S(720));
+            panel.sizeDelta = new Vector2(DesignW, DesignH);
         }
 
-        // Make sure the panel has a background that also blocks clicks to whatever is behind it
         var panelImg = panel.GetComponent<Image>();
         if (panelImg == null)
         {
@@ -159,41 +151,35 @@ public class Minesweeper : MonoBehaviour
         }
         panelImg.raycastTarget = true;
 
-        // World Space canvas (e.g. a 3D monitor) needs an event camera or clicks do nothing
         var rootCanvas = panel.GetComponentInParent<Canvas>()?.rootCanvas;
-        if (rootCanvas != null && rootCanvas.renderMode == RenderMode.WorldSpace && rootCanvas.worldCamera == null)
-            rootCanvas.worldCamera = Camera.main;
+        if (rootCanvas != null)
+        {
+            if (rootCanvas.renderMode == RenderMode.WorldSpace && rootCanvas.worldCamera == null)
+                rootCanvas.worldCamera = Camera.main;
+            if (rootCanvas.GetComponent<GraphicRaycaster>() == null)
+                rootCanvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
 
         EnsureEventSystem();
 
-        // Status text
         var statusGO = new GameObject("Status", typeof(RectTransform), typeof(Text));
         statusGO.transform.SetParent(panel, false);
-        var sRT = (RectTransform)statusGO.transform;
-        sRT.anchorMin = sRT.anchorMax = new Vector2(0.5f, 1f);
-        sRT.pivot = new Vector2(0.5f, 1f);
-        sRT.anchoredPosition = new Vector2(0, S(-20));
-        sRT.sizeDelta = new Vector2(S(620) * textSupersample, S(60) * textSupersample);
-        sRT.localScale = Vector3.one / textSupersample;
+        statusRT = (RectTransform)statusGO.transform;
+        statusRT.anchorMin = statusRT.anchorMax = statusRT.pivot = new Vector2(0.5f, 0.5f);
         status = statusGO.GetComponent<Text>();
         status.font = font;
-        status.fontSize = TF(24);
         status.alignment = TextAnchor.MiddleCenter;
         status.color = Color.white;
         status.raycastTarget = false;
 
-        // Grid container
         var gridGO = new GameObject("Grid", typeof(RectTransform), typeof(GridLayoutGroup));
         gridGO.transform.SetParent(panel, false);
-        var gRT = (RectTransform)gridGO.transform;
-        gRT.anchorMin = gRT.anchorMax = gRT.pivot = new Vector2(0.5f, 0.5f);
-        gRT.anchoredPosition = new Vector2(0, S(-30));
-        gRT.sizeDelta = new Vector2(S(600), S(600));
-        var grid = gridGO.GetComponent<GridLayoutGroup>();
-        grid.cellSize = new Vector2(S(58), S(58));
-        grid.spacing = new Vector2(S(2), S(2));
+        gridRT = (RectTransform)gridGO.transform;
+        gridRT.anchorMin = gridRT.anchorMax = gridRT.pivot = new Vector2(0.5f, 0.5f);
+        grid = gridGO.GetComponent<GridLayoutGroup>();
         grid.startCorner = GridLayoutGroup.Corner.UpperLeft;
         grid.startAxis = GridLayoutGroup.Axis.Horizontal;
+        grid.childAlignment = TextAnchor.MiddleCenter;
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = N;
 
@@ -210,11 +196,8 @@ public class Minesweeper : MonoBehaviour
                 var tRT = (RectTransform)txtGO.transform;
                 tRT.anchorMin = tRT.anchorMax = tRT.pivot = new Vector2(0.5f, 0.5f);
                 tRT.anchoredPosition = Vector2.zero;
-                tRT.sizeDelta = new Vector2(S(58) * textSupersample, S(58) * textSupersample);
-                tRT.localScale = Vector3.one / textSupersample;
                 var t = txtGO.GetComponent<Text>();
                 t.font = font;
-                t.fontSize = TF(32);
                 t.fontStyle = FontStyle.Bold;
                 t.alignment = TextAnchor.MiddleCenter;
                 t.raycastTarget = false;
@@ -222,6 +205,40 @@ public class Minesweeper : MonoBehaviour
 
                 int cx = x, cy = y;
                 cell.GetComponent<ClickRelay>().OnClick = e => HandleClick(cx, cy, e.button);
+            }
+        }
+    }
+
+    void FitLayout()
+    {
+        Canvas.ForceUpdateCanvases();
+
+        Rect r = panel.rect;
+        float u = Mathf.Min(r.width / DesignW, r.height / DesignH);
+        if (u <= 0f) return;
+
+        float ss = Mathf.Max(1f, textSupersample);
+        float blockH = StatusH + Gap + GridSize;
+        float cellSize = (GridSize - Spacing * (N - 1)) / N;
+
+        statusRT.anchoredPosition = new Vector2(0f, (blockH * 0.5f - StatusH * 0.5f) * u);
+        statusRT.sizeDelta = new Vector2(620f * u * ss, StatusH * u * ss);
+        statusRT.localScale = Vector3.one / ss;
+        status.fontSize = Mathf.Max(1, Mathf.RoundToInt(24f * u * ss));
+
+        gridRT.anchoredPosition = new Vector2(0f, (blockH * 0.5f - StatusH - Gap - GridSize * 0.5f) * u);
+        gridRT.sizeDelta = new Vector2(GridSize * u, GridSize * u);
+        grid.cellSize = new Vector2(cellSize * u, cellSize * u);
+        grid.spacing = new Vector2(Spacing * u, Spacing * u);
+
+        for (int y = 0; y < N; y++)
+        {
+            for (int x = 0; x < N; x++)
+            {
+                var tRT = label[x, y].rectTransform;
+                tRT.sizeDelta = new Vector2(cellSize * u * ss, cellSize * u * ss);
+                tRT.localScale = Vector3.one / ss;
+                label[x, y].fontSize = Mathf.Max(1, Mathf.RoundToInt(32f * u * ss));
             }
         }
     }
@@ -239,7 +256,7 @@ public class Minesweeper : MonoBehaviour
         {
             esGO = existing.gameObject;
             var old = esGO.GetComponent<StandaloneInputModule>();
-            if (old != null) Destroy(old); // old module breaks with the new Input System
+            if (old != null) Destroy(old);
         }
 
         if (esGO.GetComponent<InputSystemUIInputModule>() == null)
@@ -248,8 +265,6 @@ public class Minesweeper : MonoBehaviour
             module.AssignDefaultActions();
         }
     }
-
-    // ---------- Game logic ----------
 
     void ResetGame()
     {
@@ -281,7 +296,7 @@ public class Minesweeper : MonoBehaviour
 
         if (button != PointerEventData.InputButton.Left || flagged[x, y] || open[x, y]) return;
 
-        if (!minesPlaced) PlaceMines(x, y); // first click is always safe
+        if (!minesPlaced) PlaceMines(x, y);
 
         if (mine[x, y])
         {
@@ -388,7 +403,6 @@ public class Minesweeper : MonoBehaviour
     }
 }
 
-// Tiny helper so each cell can report left/right clicks.
 public class ClickRelay : MonoBehaviour, IPointerClickHandler
 {
     public Action<PointerEventData> OnClick;
