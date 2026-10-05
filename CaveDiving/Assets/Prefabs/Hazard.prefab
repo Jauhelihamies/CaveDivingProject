@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: b43b27394d3d12b43ac5d6b6eb36e0f1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 828606a6153de9f488aba189302babe4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GayserRotate
   direction: {x: 0, y: 1}
-  force: 4
+  force: 3
 --- !u!82 &2924692415858076711
 AudioSource:
   m_ObjectHideFlags: 0
@@ -332,7 +332,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: InitialModule.maxNumParticles
-      value: 800
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: InitialModule.startSize.scalar
@@ -348,7 +348,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: InitialModule.startSpeed.minScalar
@@ -356,7 +356,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: InitialModule.startLifetime.minScalar
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 636960943373162502, guid: 7624c92e5241acc48ac26f4e9cf9e20d, type: 3}
       propertyPath: EmissionModule.m_Bursts.Array.data[2].time
