@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void ChaseIsOver()
     {
-        moveForce = 2f;
+        moveForce = 3.5f;
     }
     void Update()
     {
