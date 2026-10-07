@@ -25197,6 +25197,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AI_SHARK_Mutant Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 2819268948075809732, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
       propertyPath: chaseSpeed
       value: 6
@@ -25210,12 +25214,28 @@ PrefabInstance:
       value: 135
       objectReference: {fileID: 0}
     - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
+      propertyPath: visionRange
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
+      propertyPath: visionTickRate
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
       propertyPath: lostTargetDelay
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
       propertyPath: avoidanceDistance
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
+      propertyPath: patrolPoints.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4331160004991398320, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
+      propertyPath: 'patrolPoints.Array.data[0]'
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5279225623639356225, guid: b1b75c011953ab84995add5712ba2d58, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30622,9 +30642,17 @@ PrefabInstance:
       propertyPath: direction.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4964055158157354156, guid: 53ff664b0f516c0438d1ca72e3674011, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7950054980423986566, guid: 53ff664b0f516c0438d1ca72e3674011, type: 3}
       propertyPath: m_Name
       value: Hazard
+      objectReference: {fileID: 0}
+    - target: {fileID: 7950054980423986566, guid: 53ff664b0f516c0438d1ca72e3674011, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

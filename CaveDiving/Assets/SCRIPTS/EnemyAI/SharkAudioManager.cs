@@ -4,14 +4,14 @@ using UnityEngine;
 public class SharkAudioManager : MonoBehaviour
 {
     [Header("Audio Source")]
-    public AudioSource musicSource; // Raahaa t‰h‰n AudioSource-komponentti
+    public AudioSource musicSource;
 
     [Header("Music Tracks")]
-    public AudioClip chaseMusic;    // Raahaa t‰h‰n takaa-ajomusiikki (.mp3 / .wav)
+    public AudioClip chaseMusic;
 
     [Header("Fade Settings")]
-    public float fadeOutDuration = 2.0f; // Kuinka monta sekuntia musiikin h‰ivytys kest‰‰
-    public float postChaseHoldTime = 1.5f; // Kuinka kauan musiikki soi t‰ysill‰ jahdan p‰‰tytty‰ ennen kuin fade alkaa
+    public float fadeOutDuration = 2.0f;
+    public float postChaseHoldTime = 1.5f;
 
     private float maxVolume;
     private Coroutine fadeCoroutine;
@@ -24,25 +24,40 @@ public class SharkAudioManager : MonoBehaviour
             musicSource = GetComponent<AudioSource>();
         }
 
-        if (musicSource != null)
+        if (musicSource != null && chaseMusic != null)
         {
             maxVolume = musicSource.volume;
-            musicSource.loop = true; // Varmistetaan ett‰ musiikki looppaa jahdan aikana
+            musicSource.loop = true;
             musicSource.clip = chaseMusic;
+            chaseMusic.LoadAudioData(); // Pakotetaan data RAM-muistiin
+            StartCoroutine(WarmUpAudioBuffer());
         }
+    }
+
+
+    private IEnumerator WarmUpAudioBuffer()
+    {
+        musicSource.volume = 0f;
+        musicSource.Play();
+        yield return null; 
+        musicSource.Pause(); 
+        musicSource.volume = maxVolume;
     }
 
     public void StartChaseMusic()
     {
         isChasing = true;
 
-        // Jos h‰ivytys oli k‰ynniss‰, pys‰ytet‰‰n se
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
 
-        if (musicSource != null && !musicSource.isPlaying)
+        if (musicSource != null)
         {
             musicSource.volume = maxVolume;
-            musicSource.Play();
+            if (!musicSource.isPlaying)
+            {
+                musicSource.UnPause();
+                if (!musicSource.isPlaying) musicSource.Play();
+            }
         }
     }
 
@@ -67,8 +82,7 @@ public class SharkAudioManager : MonoBehaviour
             musicSource.volume = Mathf.Lerp(startVolume, 0f, timer / fadeOutDuration);
             yield return null;
         }
-
-        musicSource.Stop();
-        musicSource.volume = maxVolume; 
+        musicSource.Pause();
+        musicSource.volume = maxVolume;
     }
 }
