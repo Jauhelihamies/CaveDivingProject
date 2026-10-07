@@ -12,8 +12,6 @@ public class SubManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI endGameText;
     [SerializeField] private float restartDelay = 3f;
     public CloseButton StopGame;
-    public ObjectRespawner Minigame;
- 
     private void Awake()
     {
         if (Instance == null) Instance = this;

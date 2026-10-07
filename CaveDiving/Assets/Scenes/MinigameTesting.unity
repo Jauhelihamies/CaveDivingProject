@@ -820,7 +820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!222 &1914748135738599045
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -947,9 +947,9 @@ RectTransform:
   m_Father: {fileID: 537826311}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -516, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3422365337225447394
 GameObject:
@@ -1435,7 +1435,10 @@ MonoBehaviour:
   endGameText: {fileID: 5790617452067040153}
   restartDelay: 3
   StopGame: {fileID: 5944195374356303754}
-  Minigame: {fileID: 0}
+  playerPrefab: {fileID: 0}
+  playerSpawnPoint: {fileID: 0}
+  enemyPrefab: {fileID: 0}
+  enemySpawnPoint: {fileID: 0}
 --- !u!224 &7108029307947942602
 RectTransform:
   m_ObjectHideFlags: 0
