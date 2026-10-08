@@ -8,6 +8,8 @@ public class SharkAI : MonoBehaviour
 
     [Header("State")]
     public SharkState currentState = SharkState.Patrolling;
+    // UUSI: Pit‰‰ kirjaa siit‰, onko pelaaja menetetty jo kertaalleen
+    private bool hasLostPlayerOnce = false;
 
     [Header("Movement & Patrol")]
     public float patrolSpeed = 2f;
@@ -55,15 +57,13 @@ public class SharkAI : MonoBehaviour
         sharkAudio = GetComponent<SharkAudioManager>();
         if (sharkAudio == null) sharkAudio = GetComponentInChildren<SharkAudioManager>();
 
-        // KORJAUS 1: Pakotetaan audio latautumaan muistiin heti pelin alussa (Warm-up)
-        // Jos SharkAudioManagerissasi on AudioSource, t‰m‰ valmistelee sen valmiiksi puskuriin.
         if (sharkAudio != null)
         {
             AudioSource source = sharkAudio.GetComponent<AudioSource>();
             if (source == null) source = sharkAudio.GetComponentInChildren<AudioSource>();
             if (source != null && source.clip != null)
             {
-                source.clip.LoadAudioData(); // Lataa ‰‰nen datan RAM-muistiin nyt, eik‰ vasta kun musiikki alkaa!
+                source.clip.LoadAudioData();
             }
         }
 
@@ -109,7 +109,6 @@ public class SharkAI : MonoBehaviour
 
     IEnumerator VisionRoutine()
     {
-        // KORJAUS 2: Hajautetaan useamman hain her‰‰minen eri frameille, jos haita on monta
         yield return new WaitForSeconds(Random.Range(0f, visionTickRate));
 
         while (true)
@@ -158,6 +157,9 @@ public class SharkAI : MonoBehaviour
 
     void PatrolBehavior()
     {
+        // MUUTOS: Jos hai ei ole viel‰ kertaakaan menett‰nyt pelaajaa, se ei liiku patrol-pisteille vaan odottaa paikallaan.
+        if (!hasLostPlayerOnce) return;
+
         if (patrolPoints.Length == 0) return;
 
         Transform targetPoint = patrolPoints[currentPointIndex];
@@ -236,6 +238,9 @@ public class SharkAI : MonoBehaviour
 
     void OnPlayerLost()
     {
+        // MUUTOS: Kun pelaaja menetet‰‰n ekan kerran, asetetaan muuttuja trueksi, jolloin partiointi aktivoituu
+        hasLostPlayerOnce = true;
+
         currentState = SharkState.Patrolling;
         myTransform.rotation = Quaternion.identity;
         cachedPlayerScript?.ChaseIsOver();
